@@ -10,14 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 from datetime import timedelta
-#from rest_framework_simplejwt.authentication import JWTAuthentication
 from pathlib import Path
-
-from django.conf.global_settings import AUTH_USER_MODEL
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -29,7 +25,6 @@ SECRET_KEY = 'django-insecure-+uwtqtao(d8n*zt9wheqh&a5t^m!&qbvam2@v7q^r0f@(z)16c
 DEBUG = True
 
 AUTH_USER_MODEL = "authorization.User"
-
 
 ALLOWED_HOSTS = ['*']
 
@@ -48,10 +43,10 @@ INSTALLED_APPS = [
     ################################################################
     'rest_framework',
     'corsheaders',
+    'django_extensions',
     ################################################################
     'authorization',
     'blog',
-
 ]
 
 MIDDLEWARE = [
@@ -87,7 +82,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -96,7 +90,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "django2",
         "USER": "postgres",
-        "PASSWORD": "postgres",
+        "PASSWORD": "internat11",
         "HOST": "localhost",
         "PORT": "5432",
     }
@@ -123,13 +117,16 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
     )
 }
 
 if not DEBUG:
 
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = (
-             'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.JSONRenderer',
     )
 
 SIMPLE_JWT = {
@@ -167,7 +164,6 @@ SIMPLE_JWT = {
     "CHECK_REVOKE_TOKEN": False,
     "REVOKE_TOKEN_CLAIM": "hash_password",
     "CHECK_USER_IS_ACTIVE": True,
-
 }
 
 # Internationalization
@@ -180,7 +176,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/

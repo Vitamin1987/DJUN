@@ -1,3 +1,5 @@
+from random import choices
+
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse
@@ -5,7 +7,6 @@ from rest_framework import serializers
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from authorization.constants import ROLE_ADMIN, ROLE_USER, ROLE_MODERATOR
 
@@ -23,6 +24,8 @@ class HealthApiView(APIView):
 
 
 class LoginApiView(APIView):
+
+    permission_classes = (AllowAny,)
 
     class InputSerializer(serializers.Serializer):
         username = serializers.CharField(max_length=150)
@@ -43,22 +46,24 @@ class LoginApiView(APIView):
 
             if user:
                 login(request, user)
-
                 print("user:", user.username)
             else:
-                return Response({"message": "Invalid credentials"}, status=401)
+                return Response({"message": "Invalid credentials!"}, status=401)
 
         return Response({"message": "Login successful!"})
 
 
 class LogoutApiView(APIView):
-    permission_classes = (IsAuthenticated,)
+
     def post(self, request, *args, **kwargs):
         logout(request)
 
         return Response({"message": "Logout successful!"})
 
+
 class RegisterApiView(APIView):
+
+    permission_classes = (AllowAny,)
 
     class InputSerializer(serializers.ModelSerializer):
         class Meta:
@@ -89,8 +94,8 @@ class RegisterApiView(APIView):
 
         return Response(self.OutputSerializer(user).data)
 
+
 class MeApiView(APIView):
-    permission_classes = (IsAuthenticated,)
 
     class OutputSerializer(serializers.Serializer):
         ROLE_CHOICES = [ROLE_ADMIN, ROLE_USER, ROLE_MODERATOR]

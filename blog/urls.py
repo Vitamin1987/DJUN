@@ -7,4 +7,3 @@ urlpatterns = [
     path('posts/create/', views.PostCreateAPIView.as_view()),
     path('posts/<int:post_id>/', views.PostDetailAPIView.as_view()),
 ]
-
