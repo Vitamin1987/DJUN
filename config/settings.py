@@ -90,7 +90,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "django2",
         "USER": "postgres",
-        "PASSWORD": "internat11",
+        "PASSWORD": "postgres",
         "HOST": "localhost",
         "PORT": "5432",
     }
@@ -120,7 +120,8 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-    )
+    ),
+    'PAGE_SIZE': 2
 }
 
 if not DEBUG:
