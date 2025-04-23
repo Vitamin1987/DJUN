@@ -1,9 +1,10 @@
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.hashers import make_password
-from django.db import models
-from django.contrib.auth.models import User, AbstractUser, PermissionsMixin
-from authorization.constants import ROLE_USER, ROLE_ADMIN, ROLE_MODERATOR
+from django.contrib.auth.models import AbstractUser, PermissionsMixin
 
+from django.db import models
+
+from authorization.constants import ROLE_ADMIN, ROLE_MODERATOR, ROLE_USER
 
 
 class UserManager(BaseUserManager):
@@ -17,22 +18,24 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, username, email=None, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("role", ROLE_ADMIN)
 
         if extra_fields.get("is_staff") is not True:
             raise ValueError("Superuser must have is_staff=True.")
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
+
         return self.create_user(username, email, password, **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
 
     ROLES_CHOICES = [
-        ('ROLE_ADMIN', 'Админ'),
-        ('ROLE_USER', 'Юзер'),
-        ('ROLE_MODERATOR', 'Модератор'),
+        (ROLE_ADMIN, 'Админ'),
+        (ROLE_MODERATOR, 'Модератор'),
+        (ROLE_USER, 'Юзер'),
     ]
 
     username = models.CharField(max_length=255, unique=True)
@@ -53,7 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(
         max_length=50,
         choices=ROLES_CHOICES,
-        default='ROLE_USER',
+        default=ROLE_USER
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -63,4 +66,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "username"
 
-# Create your models here.
+    class Meta:
+        verbose_name = "user"
+        verbose_name_plural = "users"
+
+    # def save(self, *args, **kwargs):
+    #     if not self.password.startswith("pbkdf2_sha256"):
+    #         self.password = make_password(self.password)
+    #     super().save(*args, **kwargs)
